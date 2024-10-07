@@ -8,6 +8,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { invoke } from '@tauri-apps/api/core';
 /*
 import { ProductService } from '@/service/ProductService';
 
@@ -16,13 +17,11 @@ onMounted(() => {
 });
 */
 
-const products = ref([
-    { code: 'APPL', name: 'Apfel', category: 'Obst', quantity: 10 },
-    { code: 'BRNE', name: 'Birne', category: 'Obst', quantity: 20 },
-    { code: 'BRKL', name: 'Brokkoli', category: 'Gemüse', quantity: 30 },
-    { code: 'KARO', name: 'Karotte', category: 'Gemüse', quantity: 40 },
-    { code: 'ANAN', name: 'Ananas', category: 'Obst', quantity: 50 }
-]);
+onMounted(() => {
+    invoke('query_products').then((data) => (products.value = data));
+})
+
+const products = ref([]);
 const columns = [
     { field: 'code', header: 'Code' },
     { field: 'name', header: 'Name' },
