@@ -18,15 +18,13 @@ onMounted(() => {
 */
 
 onMounted(() => {
-    invoke('query_products').then((data) => (products.value = data));
+    invoke('query_columns', {tableName: 'MY_TABLE'}).then((headers) => {
+        columns.value = headers;
+        invoke('query_rows', {tableName: 'MY_TABLE'}).then((data) => (products.value = data));
+    });
 })
 
 const products = ref([]);
-const columns = [
-    { field: 'code', header: 'Code' },
-    { field: 'name', header: 'Name' },
-    { field: 'category', header: 'Category' },
-    { field: 'quantity', header: 'Quantity' }
-];
+const columns = ref([]);
 
 </script>
