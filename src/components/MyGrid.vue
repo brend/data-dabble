@@ -18,11 +18,12 @@ onMounted(() => {
 */
 
 onMounted(() => {
-    invoke('query_columns', {tableName: 'MY_TABLE'}).then((headers) => {
+    const tableName = 'PP_PRODUKT';
+    invoke('query_columns', {tableName}).then((headers) => {
         columns.value = headers;
-        invoke('query_rows', {tableName: 'MY_TABLE'}).then((data) => (products.value = data));
+        invoke('query_rows', {tableName}).then((data) => (products.value = data));
     });
-})
+});
 
 const products = ref([]);
 const columns = ref([]);
