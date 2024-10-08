@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card data">
         <DataTable :value="products" tableStyle="min-width: 50rem">
             <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header"></Column>
         </DataTable>
@@ -29,3 +29,9 @@ const products = ref([]);
 const columns = ref([]);
 
 </script>
+
+<style scoped>
+.data {
+    font-family: 'Courier New', Courier, monospace;
+}
+</style>

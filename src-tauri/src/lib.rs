@@ -5,19 +5,19 @@ use tauri::ipc::Response;
 use oracle::Connection;
 
 fn open_connection() -> oracle::Result<Connection> {
-    let conn = Connection::connect("GPT_PROD", "", "GPT_PROD")?;
-    let sql = "SELECT 'Connection successful!' AS message FROM dual";
-    for row in conn.query(sql, &[])? {
-        let message: String = row?.get("message")?;
-        println!("{}", message);
-    }
-    Ok(conn)
+    let password = std::env::var("DB_PASSWORD").expect("DB_PASSWORD environment variable not set");
+    Ok(Connection::connect("GPT_PROD", &password, "GPT_PROD")?)
 }
 
+/// This is the struct that represents column information and
+/// will be serialized to JSON
 #[derive(Serialize)]
 struct Column {
+    /// Name of the column in the database
     field: String,
+    /// Caption of the column to be displayed in the UI
     header: String,
+    /// Data type of the column
     data_type: String,
 }
 
@@ -46,7 +46,6 @@ fn query_columns(table_name: String) -> Response {
         })
         .collect::<Vec<_>>();
     
-    println!("{:?}", serde_json::to_string(&columns).unwrap());
     Response::new(serde_json::to_string(&columns).unwrap())
 }
 
