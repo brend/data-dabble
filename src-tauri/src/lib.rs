@@ -1,8 +1,8 @@
 use std::collections::HashMap;
-
 use serde::Serialize;
 use tauri::ipc::Response;
 use oracle::Connection;
+use std::env;
 
 fn open_connection() -> oracle::Result<Connection> {
     let password = std::env::var("DB_PASSWORD").expect("DB_PASSWORD environment variable not set");
