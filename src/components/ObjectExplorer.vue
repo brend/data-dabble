@@ -13,7 +13,7 @@ const nodes = ref([]);
 const loadNode = (node) => {
     if (!node.children) {
         invoke('query_columns', {tableName: node.data}).then((headers) => {
-            node.children = headers.map((column) => ({label: column.header, data: `${node.data}.${column.field}`, leaf: true}));
+            node.children = headers.map((column) => ({label: column.field, data: `${node.data}.${column.field}`, leaf: true}));
         });
     }
 };

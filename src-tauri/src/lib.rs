@@ -1,31 +1,25 @@
-use std::collections::HashMap;
-use serde::Serialize;
 use tauri::ipc::Response;
-use oracle::Connection;
-use std::env;
 
-fn open_connection() -> oracle::Result<Connection> {
-    let password = std::env::var("DB_PASSWORD").expect("DB_PASSWORD environment variable not set");
-    Ok(Connection::connect("GPT_PROD", &password, "GPT_PROD")?)
-}
+mod dbprovider;
+mod oracle;
 
-/// This is the struct that represents column information and
-/// will be serialized to JSON
-#[derive(Serialize)]
-struct Column {
-    /// Name of the column in the database
-    field: String,
-    /// Caption of the column to be displayed in the UI
-    header: String,
-    /// Data type of the column
-    data_type: String,
+use crate::dbprovider::{DatabaseProvider, Connection, Column};
+use crate::oracle::OracleProvider;
+
+fn open_connection() -> Result<Box<dyn Connection>, String> {
+    let provider = OracleProvider {
+        username: "GPT_PROD".to_string(),
+        password: std::env::var("DB_PASSWORD").unwrap(),
+        connect_string: "GPT_PROD".to_string(),
+    };
+    provider.connect()
 }
 
 #[tauri::command]
 fn query_columns(table_name: String) -> Response {
     let conn = open_connection().unwrap();
     let sql = format!(
-        "SELECT column_name AS field, column_name AS header, data_type
+        "SELECT column_name AS field, data_type
         FROM all_tab_columns
         WHERE table_name = '{}'
         AND owner = '{}'
@@ -34,14 +28,12 @@ fn query_columns(table_name: String) -> Response {
         "GPT_PROD"
     );
     let columns = conn
-        .query(&sql, &[])
+        .query(&sql)
         .unwrap()
         .map(|row| {
-            let row = row.unwrap();
             Column {
-                field: row.get("field").unwrap(),
-                header: row.get("header").unwrap(),
-                data_type: row.get("data_type").unwrap(),
+                field: row.get(0).unwrap(),
+                data_type: row.get(1).unwrap(),
             }
         })
         .collect::<Vec<_>>();
@@ -51,21 +43,11 @@ fn query_columns(table_name: String) -> Response {
 
 #[tauri::command]
 fn query_rows(table_name: String) -> Response {
-    let rows = open_connection()
+    let result_set = open_connection()
         .unwrap()
-        .query(&format!("SELECT * FROM {} WHERE ROWNUM <= 100", table_name), &[])
-        .unwrap()
-        .map(|row| {
-            let row = row.unwrap();
-            let mut map: HashMap<String, String> = HashMap::new();
-            for column in row.column_info() {
-                map.insert(column.name().to_string(), row.get(column.name()).unwrap_or(String::new()));
-            }
-            map
-        })
-        .collect::<Vec<_>>();
-
-    Response::new(serde_json::to_string(&rows).unwrap())
+        .query(&format!("SELECT * FROM {} WHERE ROWNUM <= 100", table_name))
+        .unwrap();
+    Response::new(serde_json::to_string(&result_set).unwrap())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
