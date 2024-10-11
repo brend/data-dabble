@@ -50,11 +50,26 @@ fn query_rows(table_name: String) -> Response {
     Response::new(serde_json::to_string(&result_set).unwrap())
 }
 
+#[tauri::command]
+fn query_tables() -> Response {
+    let provider = OracleProvider {
+        username: "GPT_PROD".to_string(),
+        password: std::env::var("DB_PASSWORD").unwrap(),
+        connect_string: "GPT_PROD".to_string(),
+    };
+    let tables = provider.query_tables().unwrap();
+    Response::new(serde_json::to_string(&tables).unwrap())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![query_columns, query_rows])
+        .invoke_handler(tauri::generate_handler![
+            query_columns, 
+            query_rows,
+            query_tables,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

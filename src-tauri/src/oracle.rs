@@ -22,6 +22,14 @@ impl DatabaseProvider for OracleProvider {
             Err(e) => Err(e.to_string())
         }
     }
+
+    fn query_tables(&self) -> Result<Vec<String>, String> {
+        let conn = self.connect()?;
+        let sql = "SELECT table_name FROM all_tables WHERE owner = 'GPT_PROD' ORDER BY table_name";
+        let result_set = conn.query(sql)?;
+        let tables = result_set.rows.iter().map(|row| row.values[0].clone()).collect();
+        Ok(tables)
+    }
 }
 
 impl Conn for OracleConnection {

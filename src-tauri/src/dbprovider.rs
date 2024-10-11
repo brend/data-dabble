@@ -37,4 +37,5 @@ pub trait Connection {
 
 pub trait DatabaseProvider {
     fn connect(&self) -> Result<Box<dyn Connection>, String>;
+    fn query_tables(&self) -> Result<Vec<String>, String>;
 }

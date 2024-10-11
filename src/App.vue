@@ -1,14 +1,10 @@
 <script setup lang="ts">
-//import MyGrid from './components/MyGrid.vue';
-import ObjectExplorer from './components/ObjectExplorer.vue';
+import Main from './components/Main.vue';
 </script>
 
 <template>
   <div class="container">
-    <h1>Welcome to <span class="ci">DataDabble</span>!</h1>
-
-    <!-- <MyGrid /> -->
-     <ObjectExplorer />
+    <Main></Main>
   </div>
 </template>
 
