@@ -3,7 +3,7 @@ import { TreeNode } from "primevue/treenode";
 
 class ExplorerService {
   async getExplorerTree(parentNode: TreeNode | undefined): Promise<TreeNode[]> {
-    const nodes: TreeNode[] = await invoke("get_data_sources", {
+    const nodes: TreeNode[] = await invoke("get_nodes", {
       parentNodeKey: parentNode?.key,
     });
     console.log("expanding node", parentNode, nodes);

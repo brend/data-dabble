@@ -1,3 +1,4 @@
+use crate::provider::get_data_providers;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -5,8 +6,8 @@ pub enum NodeType {
     DataSource,
     // Database,
     // Schema,
-    // Table,
-    // Column,
+    Table,
+    Column,
 }
 
 #[derive(Serialize)]
@@ -29,19 +30,27 @@ impl Node {
     }
 }
 
-pub fn get_data_source_nodes(parent_node_key: Option<String>) -> Vec<Node> {
+pub fn get_nodes(parent_node_key: Option<String>) -> Vec<Node> {
     if let Some(parent_node_key) = parent_node_key {
-        match parent_node_key.as_str() {
-            "1" => vec![
-                Node::new("1.1", "Gigantos - Sales", NodeType::DataSource, false),
-                Node::new("1.2", "Gigantos - HR", NodeType::DataSource, false),
-            ],
-            _ => vec![],
+        let providers = get_data_providers();
+        for provider in providers {
+            if provider.owns_node(&parent_node_key) {
+                return provider.get_nodes(parent_node_key);
+            }
         }
+
+        vec![]
     } else {
-        vec![
-            Node::new("1", "Gigantos (MS SQL)", NodeType::DataSource, false),
-            Node::new("2", "Persephone (Oracle DB)", NodeType::DataSource, false),
-        ]
+        let providers = get_data_providers();
+        let mut nodes = vec![];
+        for provider in providers {
+            nodes.push(Node::new(
+                &provider.id(),
+                &provider.id(),
+                NodeType::DataSource,
+                false,
+            ));
+        }
+        nodes
     }
 }
