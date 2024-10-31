@@ -1,10 +1,12 @@
 use std::env;
 
-use crate::explorer::{Node, NodeType};
+use crate::explorer::Node;
 use crate::provider::DataProvider;
 use oracle::Connection;
 
 const PATH_SEPARATOR: &str = ".";
+const NODE_TYPE_TABLE: &str = "table";
+const NODE_TYPE_COLUMN: &str = "column";
 
 pub struct OracleProvider {
     id: String,
@@ -39,7 +41,7 @@ impl OracleProvider {
             let node = Node::new(
                 format!("{}.{}", self.id(), table_name).as_str(),
                 &table_name,
-                NodeType::Table,
+                NODE_TYPE_TABLE,
                 false,
             );
             nodes.push(node);
@@ -58,7 +60,7 @@ impl OracleProvider {
         let rows = connection.query(&sql, &[]).unwrap();
         for row in rows {
             let column_name: String = row.unwrap().get(0).unwrap();
-            let node = Node::new(&column_name, &column_name, NodeType::Column, true);
+            let node = Node::new(&column_name, &column_name, NODE_TYPE_COLUMN, true);
             nodes.push(node);
         }
         nodes

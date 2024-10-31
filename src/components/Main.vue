@@ -10,7 +10,7 @@
         :value="nodes"
         @node-expand="onNodeExpand"
         :loading="loading"
-        class="w-full md:w-[30rem]"
+        class="w-full md:w-[30rem] explorer"
       ></Tree>
     </SplitterPanel>
     <SplitterPanel :size="75">
@@ -22,13 +22,17 @@
         </TabList>
         <TabPanels class="full-height">
           <TabPanel class="full-height" value="0">
-            <Textarea autoResize class="code full-height" v-model="text1" />
+            <Textarea
+              autoResize
+              class="code-editor full-height"
+              v-model="text1"
+            />
           </TabPanel>
           <TabPanel value="1">
-            <Textarea autoResize class="code" v-model="text2" />
+            <Textarea autoResize class="code-editor" v-model="text2" />
           </TabPanel>
           <TabPanel value="2">
-            <Textarea autoResize class="code" v-model="text3" />
+            <Textarea autoResize class="code-editor" v-model="text3" />
           </TabPanel>
         </TabPanels>
       </Tabs>
@@ -134,8 +138,13 @@ const onNodeExpand = (event) => {
   height: 100%;
 }
 
-.code {
+.code-editor {
   font-family: monospace;
   width: 100%;
+}
+
+.explorer {
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 </style>
