@@ -33,35 +33,15 @@ pub fn get_data_source_nodes(parent_node_key: Option<String>) -> Vec<ExplorerNod
     if let Some(parent_node_key) = parent_node_key {
         match parent_node_key.as_str() {
             "1" => vec![
-                ExplorerNode.new(
-                    "1.1".to_string(),
-                    "Gigantos - Sales".to_string(),
-                    NodeType::DataSource,
-                    false,
-                ),
-                ExplorerNode.new(
-                    "1.2".to_string(),
-                    "Gigantos - HR".to_string(),
-                    NodeType::DataSource,
-                    false,
-                ),
+                ExplorerNode::new("1.1", "Gigantos - Sales", NodeType::DataSource, false),
+                ExplorerNode::new("1.2", "Gigantos - HR", NodeType::DataSource, false),
             ],
             _ => vec![],
         }
     } else {
         vec![
-            ExplorerNode.new(
-                "1".to_string(),
-                "Gigantos (MS SQL)".to_string(),
-                NodeType::DataSource,
-                false,
-            ),
-            ExplorerNode.new(
-                "2".to_string(),
-                "Persephone (Oracle DB)".to_string(),
-                NodeType::DataSource,
-                false,
-            ),
+            ExplorerNode::new("1", "Gigantos (MS SQL)", NodeType::DataSource, false),
+            ExplorerNode::new("2", "Persephone (Oracle DB)", NodeType::DataSource, false),
         ]
     }
 }
