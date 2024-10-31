@@ -8,8 +8,8 @@ pub trait DataProvider {
 }
 
 pub fn get_data_providers() -> Vec<Box<dyn DataProvider>> {
-    vec![Box::new(OracleProvider::new(
-        "GPT_PROD@Persephone",
-        "GPT_PROD",
-    ))]
+    vec![
+        Box::new(OracleProvider::new("GPT_PROD@Persephone", "GPT_PROD")),
+        Box::new(OracleProvider::new("GPT_IMPORT@Persephone", "GPT_IMPORT")),
+    ]
 }
