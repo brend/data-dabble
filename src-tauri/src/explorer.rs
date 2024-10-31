@@ -10,7 +10,7 @@ pub enum NodeType {
 }
 
 #[derive(Serialize)]
-pub struct ExplorerNode {
+pub struct Node {
     pub key: String,
     pub label: String,
     #[serde(rename = "type")]
@@ -18,7 +18,7 @@ pub struct ExplorerNode {
     pub leaf: bool,
 }
 
-impl ExplorerNode {
+impl Node {
     pub fn new(key: &str, label: &str, node_type: NodeType, leaf: bool) -> Self {
         Self {
             key: key.to_string(),
@@ -29,19 +29,19 @@ impl ExplorerNode {
     }
 }
 
-pub fn get_data_source_nodes(parent_node_key: Option<String>) -> Vec<ExplorerNode> {
+pub fn get_data_source_nodes(parent_node_key: Option<String>) -> Vec<Node> {
     if let Some(parent_node_key) = parent_node_key {
         match parent_node_key.as_str() {
             "1" => vec![
-                ExplorerNode::new("1.1", "Gigantos - Sales", NodeType::DataSource, false),
-                ExplorerNode::new("1.2", "Gigantos - HR", NodeType::DataSource, false),
+                Node::new("1.1", "Gigantos - Sales", NodeType::DataSource, false),
+                Node::new("1.2", "Gigantos - HR", NodeType::DataSource, false),
             ],
             _ => vec![],
         }
     } else {
         vec![
-            ExplorerNode::new("1", "Gigantos (MS SQL)", NodeType::DataSource, false),
-            ExplorerNode::new("2", "Persephone (Oracle DB)", NodeType::DataSource, false),
+            Node::new("1", "Gigantos (MS SQL)", NodeType::DataSource, false),
+            Node::new("2", "Persephone (Oracle DB)", NodeType::DataSource, false),
         ]
     }
 }

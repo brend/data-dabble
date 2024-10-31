@@ -2,9 +2,11 @@ use tauri::ipc::Response;
 
 mod explorer;
 
+use explorer::get_data_source_nodes;
+
 #[tauri::command]
 fn get_data_sources(parent_node_key: Option<String>) -> Response {
-    let data_sources = explorer::get_data_source_nodes(parent_node_key);
+    let data_sources = get_data_source_nodes(parent_node_key);
     Response::new(serde_json::to_string(&data_sources).unwrap())
 }
 
