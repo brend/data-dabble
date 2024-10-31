@@ -1,65 +1,141 @@
 <template>
-    <div class="app-container">
-      <!-- Sidebar for Object Explorer -->
-      <Drawer v-model:visible="isSidebarVisible" header="Sidebar baby" position="left" :dismissable="false" class="object-explorer-sidebar">
-        <ObjectExplorer />
-      </Drawer>
-  
-      <!-- Main Content Area -->
-      <div class="main-content">
-        <!-- Document Tabs -->
-        <TabView>
-          <TabPanel v-for="tab in tabs" :key="tab.name" :header="tab.name">
-            <component :is="tab.component" />
+  <Menubar :model="items" />
+  <Splitter class="mb-8">
+    <SplitterPanel
+      :size="25"
+      :minSize="25"
+      class="flex items-center justify-center"
+    >
+      <Tree
+        :value="nodes"
+        @node-expand="onNodeExpand"
+        :loading="loading"
+        class="w-full md:w-[30rem]"
+      ></Tree>
+    </SplitterPanel>
+    <SplitterPanel :size="75">
+      <Tabs class="full-height" value="0">
+        <TabList>
+          <Tab value="0">Query 1</Tab>
+          <Tab value="1">Query 2</Tab>
+          <Tab value="2">Query 3</Tab>
+        </TabList>
+        <TabPanels class="full-height">
+          <TabPanel class="full-height" value="0">
+            <Textarea autoResize class="code full-height" v-model="text1" />
           </TabPanel>
-        </TabView>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  import { ref } from 'vue';
-  import Drawer from 'primevue/drawer';
-  import TabView from 'primevue/tabview';
-  import TabPanel from 'primevue/tabpanel';
-  import ObjectExplorer from './ObjectExplorer.vue';
-  
-  export default {
-    components: {
-      Drawer,
-      TabView,
-      TabPanel,
-      ObjectExplorer,
-    },
-    setup() {
-      const isSidebarVisible = ref(true);
-      const tabs = ref([
-        { name: 'Query Editor', component: 'QueryEditor' },
-        { name: 'Results', component: 'ResultsGrid' },
-        // Add more tabs as needed
-      ]);
-  
-      return {
-        isSidebarVisible,
-        tabs,
-      };
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .app-container {
-    display: flex;
-    height: 100vh;
-  }
-  
-  .object-explorer-sidebar {
-    width: 300px;
-  }
-  
-  .main-content {
-    flex: 1;
-    padding: 1rem;
-  }
-  </style>
-  
+          <TabPanel value="1">
+            <Textarea autoResize class="code" v-model="text2" />
+          </TabPanel>
+          <TabPanel value="2">
+            <Textarea autoResize class="code" v-model="text3" />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </SplitterPanel>
+  </Splitter>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
+
+import Menubar from "primevue/menubar";
+
+import Tabs from "primevue/tabs";
+import TabList from "primevue/tablist";
+import Tab from "primevue/tab";
+import TabPanels from "primevue/tabpanels";
+import TabPanel from "primevue/tabpanel";
+
+import Textarea from "primevue/textarea";
+
+import Tree from "primevue/tree";
+
+import ExplorerService from "../services/ExplorerService";
+
+const items = ref([
+  {
+    label: "Home",
+    icon: "pi pi-home",
+  },
+  {
+    label: "Features",
+    icon: "pi pi-star",
+  },
+  {
+    label: "Projects",
+    icon: "pi pi-search",
+    items: [
+      {
+        label: "Components",
+        icon: "pi pi-bolt",
+      },
+      {
+        label: "Blocks",
+        icon: "pi pi-server",
+      },
+      {
+        label: "UI Kit",
+        icon: "pi pi-pencil",
+      },
+      {
+        label: "Templates",
+        icon: "pi pi-palette",
+        items: [
+          {
+            label: "Apollo",
+            icon: "pi pi-palette",
+          },
+          {
+            label: "Ultima",
+            icon: "pi pi-palette",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Contact",
+    icon: "pi pi-envelope",
+  },
+]);
+
+const text1 = ref(
+  "SELECT PP_ID, PP_ARTIKEL_NR, PP_BEZEICHNUNG_1 FROM PP_PRODUKT;"
+);
+const text2 = ref(
+  "CREATE TABLE T_Shlorp (ID NUMBER NOT NULL, Name NVARCHAR(255));"
+);
+const text3 = ref(
+  "DECLARE\n  n NUMBER;\nBEGIN\n  SELECT COUNT(*) INTO n FROM PP_PRODUKT;\n  DBMS_OUTPUT.PUT_LINE('Anzahl vorhandener Produkte: ' || n);\nEND;"
+);
+
+const explorerService = new ExplorerService();
+const nodes = ref([]);
+const loading = ref(true);
+explorerService.getExplorerTree().then((data) => {
+  nodes.value = data;
+  loading.value = false;
+});
+const onNodeExpand = (event) => {
+  console.log("event", event);
+  loading.value = true;
+  explorerService.getExplorerTree(event).then((data) => {
+    event.children = data;
+    loading.value = false;
+  });
+};
+</script>
+
+<style scoped>
+.full-height {
+  height: 100%;
+}
+
+.code {
+  font-family: monospace;
+  width: 100%;
+}
+</style>
