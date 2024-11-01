@@ -1,5 +1,5 @@
-use crate::provider::get_data_providers;
 use serde::Serialize;
+use crate::{get_data_providers, Preferences};
 
 const NODE_TYPE_DATASOURCE: &str = "datasource";
 
@@ -23,9 +23,10 @@ impl Node {
     }
 }
 
-pub fn get_nodes(parent_node_key: Option<String>) -> Vec<Node> {
-    if let Some(parent_node_key) = parent_node_key {
-        let providers = get_data_providers();
+pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> Vec<Node> {
+    let providers =  get_data_providers(preferences);
+
+    if let Some(parent_node_key) = parent_node_key {    
         for provider in providers {
             if provider.owns_node(&parent_node_key) {
                 return provider.get_nodes(parent_node_key);
@@ -34,7 +35,6 @@ pub fn get_nodes(parent_node_key: Option<String>) -> Vec<Node> {
 
         vec![]
     } else {
-        let providers = get_data_providers();
         let mut nodes = vec![];
         for provider in providers {
             nodes.push(Node::new(

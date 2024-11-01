@@ -1,5 +1,4 @@
 <template>
-  <Menubar :model="items" />
   <Splitter class="mb-8">
     <SplitterPanel
       :size="25"
@@ -45,8 +44,6 @@ import { ref } from "vue";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 
-import Menubar from "primevue/menubar";
-
 import Tabs from "primevue/tabs";
 import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
@@ -58,53 +55,6 @@ import Textarea from "primevue/textarea";
 import Tree from "primevue/tree";
 
 import ExplorerService from "../services/ExplorerService";
-
-const items = ref([
-  {
-    label: "Home",
-    icon: "pi pi-home",
-  },
-  {
-    label: "Features",
-    icon: "pi pi-star",
-  },
-  {
-    label: "Projects",
-    icon: "pi pi-search",
-    items: [
-      {
-        label: "Components",
-        icon: "pi pi-bolt",
-      },
-      {
-        label: "Blocks",
-        icon: "pi pi-server",
-      },
-      {
-        label: "UI Kit",
-        icon: "pi pi-pencil",
-      },
-      {
-        label: "Templates",
-        icon: "pi pi-palette",
-        items: [
-          {
-            label: "Apollo",
-            icon: "pi pi-palette",
-          },
-          {
-            label: "Ultima",
-            icon: "pi pi-palette",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Contact",
-    icon: "pi pi-envelope",
-  },
-]);
 
 const text1 = ref(
   "SELECT PP_ID, PP_ARTIKEL_NR, PP_BEZEICHNUNG_1 FROM PP_PRODUKT;"

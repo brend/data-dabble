@@ -30,3 +30,11 @@ Required configuration provided as environment variables (default: `.env` file i
 ```sh
 npm run tauri dev
 ```
+## Oracle Database
+
+### macOS
+
+1. Download the *Oracle Instant Client*
+2. Place all files in `$ORACLE_HOME/lib`
+
+Read about the [discovery process](https://odpi-c.readthedocs.io/en/latest/user_guide/installation.html).

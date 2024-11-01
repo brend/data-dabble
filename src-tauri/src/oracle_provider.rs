@@ -11,14 +11,16 @@ const NODE_TYPE_COLUMN: &str = "column";
 pub struct OracleProvider {
     id: String,
     tns_name: String,
+    password: String,
 }
 
 impl OracleProvider {
-    pub fn new(id: &str, tns_name: &str) -> Self {
-        Self {
-            id: id.to_string(),
-            tns_name: tns_name.to_string(),
-        }
+
+    pub fn new(connection_string: &str, user: &str, password: &str) -> Self {
+        let tns_name = connection_string.to_string();
+        let id = format!("oracle-{}", tns_name).to_string();
+        let password = password.to_string();
+        OracleProvider { id, tns_name, password }
     }
 
     fn open_connection(&self) -> Connection {
