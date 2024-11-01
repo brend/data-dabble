@@ -4,7 +4,7 @@ import Main from "./components/Main.vue";
 
 <template>
   <div class="container">
-    <Main></Main>
+    <Main class="main-view"></Main>
   </div>
 </template>
 
@@ -19,11 +19,20 @@ import Main from "./components/Main.vue";
 
 .container {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  margin: 0;
   background-color: yellow;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  text-align: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.main-view {
+  width: 100%;
+  height: 100%;
 }
 </style>
