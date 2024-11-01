@@ -11,6 +11,10 @@
         :loading="loading"
         class="w-full md:w-[30rem] explorer"
       ></Tree>
+
+      <Dialog v-model:visible="errorDialogVisible" modal header="Data Dabble" :style="{ width: '25rem' }">
+        <span class="text-surface-500 dark:text-surface-400 block mb-8">An error has occurred.</span>
+      </Dialog>
     </SplitterPanel>
     <SplitterPanel :size="75">
       <Tabs class="full-height" value="0">
@@ -54,6 +58,8 @@ import Textarea from "primevue/textarea";
 
 import Tree from "primevue/tree";
 
+import Dialog from "primevue/dialog";
+
 import ExplorerService from "../services/ExplorerService";
 
 const text1 = ref(
@@ -79,8 +85,13 @@ const onNodeExpand = (event) => {
   explorerService.getExplorerTree(event).then((data) => {
     event.children = data;
     loading.value = false;
+  }).catch(() => {
+    loading.value = false;
+    errorDialogVisible.value = true;
   });
 };
+
+const errorDialogVisible = ref(false);
 </script>
 
 <style scoped>

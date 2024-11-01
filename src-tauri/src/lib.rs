@@ -1,6 +1,8 @@
 use provider::DataProvider;
 use serde::{Deserialize, Serialize};
-use tauri::{ipc::Response, Manager, State};
+use tauri::{Manager, State};
+use provider::DataError;
+use explorer::Node;
 
 mod explorer;
 mod oracle_provider;
@@ -54,9 +56,9 @@ fn read_user_preferences(app: &tauri::AppHandle) -> Result<Preferences, Persiste
 }
 
 #[tauri::command]
-fn get_nodes(parent_node_key: Option<String>, preferences: State<Preferences>) -> Response {
-    let nodes = explorer::get_nodes(parent_node_key, &preferences);
-    Response::new(serde_json::to_string(&nodes).unwrap())
+fn get_nodes(parent_node_key: Option<String>, preferences: State<Preferences>) -> Result<Vec<Node>, DataError> {
+    let nodes = explorer::get_nodes(parent_node_key, &preferences)?;
+    Ok(nodes)
 }
 
 pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider>> {

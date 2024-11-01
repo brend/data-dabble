@@ -1,5 +1,5 @@
 use serde::Serialize;
-use crate::{get_data_providers, Preferences};
+use crate::{get_data_providers, provider::DataError, Preferences};
 
 const NODE_TYPE_DATASOURCE: &str = "datasource";
 
@@ -23,7 +23,7 @@ impl Node {
     }
 }
 
-pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> Vec<Node> {
+pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> Result<Vec<Node>, DataError> {
     let providers =  get_data_providers(preferences);
 
     if let Some(parent_node_key) = parent_node_key {    
@@ -33,7 +33,7 @@ pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> 
             }
         }
 
-        vec![]
+        Ok(vec![])
     } else {
         let mut nodes = vec![];
         for provider in providers {
@@ -44,6 +44,6 @@ pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> 
                 false,
             ));
         }
-        nodes
+        Ok(nodes)
     }
 }
