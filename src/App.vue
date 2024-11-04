@@ -19,7 +19,6 @@ import Main from "./components/Main.vue";
 
 .container {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  background-color: yellow;
   width: 100vw;
   height: 100vh;
   position: relative;
