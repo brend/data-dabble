@@ -1,8 +1,8 @@
+use explorer::Node;
+use provider::DataError;
 use provider::DataProvider;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
-use provider::DataError;
-use explorer::Node;
 
 mod explorer;
 mod oracle_provider;
@@ -23,6 +23,15 @@ pub struct Preferences {
     pub data_sources: Vec<DataSourceDefinition>,
 }
 
+impl Default for Preferences {
+    fn default() -> Self {
+        Preferences {
+            version: "0.1".to_string(),
+            data_sources: vec![],
+        }
+    }
+}
+
 #[derive(Debug)]
 enum PersistencyError {
     TauriError(tauri::Error),
@@ -37,10 +46,9 @@ impl From<tauri::Error> for PersistencyError {
 }
 
 fn read_user_preferences(app: &tauri::AppHandle) -> Result<Preferences, PersistencyError> {
-    let user_preferences = app
-        .path()
-        .app_data_dir()?
-        .join("user_preferences.json");
+    let user_preferences = app.path().app_data_dir()?.join("user_preferences.json");
+
+    print!("Looking for user preferences file: {:?}", user_preferences);
 
     if user_preferences.exists() {
         let user_preferences_file = std::fs::read_to_string(user_preferences).unwrap();
@@ -56,7 +64,10 @@ fn read_user_preferences(app: &tauri::AppHandle) -> Result<Preferences, Persiste
 }
 
 #[tauri::command]
-fn get_nodes(parent_node_key: Option<String>, preferences: State<Preferences>) -> Result<Vec<Node>, DataError> {
+fn get_nodes(
+    parent_node_key: Option<String>,
+    preferences: State<Preferences>,
+) -> Result<Vec<Node>, DataError> {
     let nodes = explorer::get_nodes(parent_node_key, &preferences)?;
     Ok(nodes)
 }
@@ -84,15 +95,20 @@ pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            let user_preferences: Preferences;
+
             match read_user_preferences(&app.handle()) {
                 Ok(preferences) => {
                     println!("Preferences: {:?}", preferences);
-                    app.manage(preferences);
+                    user_preferences = preferences;
                 }
                 Err(e) => {
                     println!("Error reading user preferences: {:?}", e);
+                    user_preferences = Preferences::default();
                 }
             }
+
+            app.manage(user_preferences);
             Ok(())
         })
         .plugin(tauri_plugin_shell::init())
