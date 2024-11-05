@@ -9,7 +9,7 @@ mod oracle_provider;
 mod provider;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-struct DataSourceDefinition {
+pub struct DataSourceDefinition {
     pub name: String,
     pub provider: String,
     pub connection_string: String,
@@ -91,6 +91,20 @@ pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider
     providers
 }
 
+fn log_persistency_error(e: &PersistencyError) {
+    match e {
+        PersistencyError::TauriError(e) => {
+            println!("Tauri error: {:?}", e);
+        }
+        PersistencyError::IoError(e) => {
+            println!("IO error: {:?}", e);
+        }
+        PersistencyError::SerdeError(e) => {
+            println!("Serde error: {:?}", e);
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -103,7 +117,7 @@ pub fn run() {
                     user_preferences = preferences;
                 }
                 Err(e) => {
-                    println!("Error reading user preferences: {:?}", e);
+                    log_persistency_error(&e);
                     user_preferences = Preferences::default();
                 }
             }
