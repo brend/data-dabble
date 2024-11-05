@@ -8,10 +8,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import Tree from "primevue/tree";
 import ExplorerService from "../services/ExplorerService";
 
+const emit = defineEmits(["error"]);
 const explorerService = new ExplorerService();
 const nodes = ref([]);
 const loading = ref(true);
@@ -30,9 +31,9 @@ const onNodeExpand = (event) => {
       event.children = data;
       loading.value = false;
     })
-    .catch(() => {
+    .catch((e) => {
       loading.value = false;
-      errorDialogVisible.value = true;
+      emit("error", e);
     });
 };
 </script>

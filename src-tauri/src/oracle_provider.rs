@@ -1,5 +1,3 @@
-use std::env;
-
 use crate::explorer::Node;
 use crate::provider::{DataError, DataProvider};
 use oracle::Connection;
@@ -15,20 +13,19 @@ pub struct OracleProvider {
 }
 
 impl OracleProvider {
-
-    pub fn new(connection_string: &str, user: &str, password: &str) -> Self {
+    pub fn new(connection_string: &str, _user: &str, password: &str) -> Self {
         let tns_name = connection_string.to_string();
         let id = format!("oracle-{}", tns_name).to_string();
         let password = password.to_string();
-        OracleProvider { id, tns_name, password }
+        OracleProvider {
+            id,
+            tns_name,
+            password,
+        }
     }
 
     fn open_connection(&self) -> Result<Connection, DataError> {
-        match Connection::connect(
-            &self.tns_name,
-            &self.password,
-            &self.tns_name,
-        ) {
+        match Connection::connect(&self.tns_name, &self.password, &self.tns_name) {
             Ok(connection) => Ok(connection),
             Err(error) => Err(DataError::DataProviderError(error.to_string())),
         }

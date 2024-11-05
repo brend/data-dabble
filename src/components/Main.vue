@@ -5,15 +5,29 @@
       :minSize="25"
       class="flex items-center justify-center"
     >
-      <Tree
-        :value="nodes"
-        @node-expand="onNodeExpand"
-        :loading="loading"
-        class="w-full md:w-[30rem] explorer"
-      ></Tree>
-
-      <Dialog v-model:visible="errorDialogVisible" modal header="Data Dabble" :style="{ width: '25rem' }">
-        <span class="text-surface-500 dark:text-surface-400 block mb-8">An error has occurred.</span>
+      <Explorer
+        @error="
+          (error) => {
+            errorDialogVisible = true;
+            console.log('error', error);
+            errorText = error;
+          }
+        "
+      />
+      <Dialog
+        v-model:visible="errorDialogVisible"
+        modal
+        header="Data Dabble"
+        :style="{ width: '25rem' }"
+      >
+        <p class="text-surface-500 dark:text-surface-400 block mb-8">
+          An error has occurred:
+        </p>
+        <p
+          class="text-surface-500 dark:text-surface-400 block mb-8 error-message"
+        >
+          {{ errorText }}
+        </p>
       </Dialog>
     </SplitterPanel>
     <SplitterPanel :size="75">
@@ -56,11 +70,9 @@ import TabPanel from "primevue/tabpanel";
 
 import Textarea from "primevue/textarea";
 
-import Tree from "primevue/tree";
-
 import Dialog from "primevue/dialog";
 
-import ExplorerService from "../services/ExplorerService";
+import Explorer from "./Explorer.vue";
 
 const text1 = ref(
   "SELECT PP_ID, PP_ARTIKEL_NR, PP_BEZEICHNUNG_1 FROM PP_PRODUKT;"
@@ -72,26 +84,8 @@ const text3 = ref(
   "DECLARE\n  n NUMBER;\nBEGIN\n  SELECT COUNT(*) INTO n FROM PP_PRODUKT;\n  DBMS_OUTPUT.PUT_LINE('Anzahl vorhandener Produkte: ' || n);\nEND;"
 );
 
-const explorerService = new ExplorerService();
-const nodes = ref([]);
-const loading = ref(true);
-explorerService.getExplorerTree().then((data) => {
-  nodes.value = data;
-  loading.value = false;
-});
-const onNodeExpand = (event) => {
-  console.log("event", event);
-  loading.value = true;
-  explorerService.getExplorerTree(event).then((data) => {
-    event.children = data;
-    loading.value = false;
-  }).catch(() => {
-    loading.value = false;
-    errorDialogVisible.value = true;
-  });
-};
-
 const errorDialogVisible = ref(false);
+const errorText = ref("");
 </script>
 
 <style scoped>
@@ -107,5 +101,15 @@ const errorDialogVisible = ref(false);
 .explorer {
   font-size: 0.8rem;
   cursor: pointer;
+}
+
+.dialog {
+  font-size: 0.8rem;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.error-message {
+  white-space: pre-wrap;
+  font-family: monospace;
 }
 </style>
