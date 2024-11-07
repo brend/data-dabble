@@ -3,7 +3,7 @@
     <SplitterPanel
       :size="25"
       :minSize="25"
-      class="flex items-center justify-center"
+      class="flex items-center justify-center scrolling"
     >
       <Explorer
         @error="
@@ -111,5 +111,9 @@ const errorText = ref("");
 .error-message {
   white-space: pre-wrap;
   font-family: monospace;
+}
+
+.scrolling {
+  overflow-y: auto;
 }
 </style>
