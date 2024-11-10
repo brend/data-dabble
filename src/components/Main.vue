@@ -39,11 +39,7 @@
         </TabList>
         <TabPanels class="full-height">
           <TabPanel class="full-height" value="0">
-            <Textarea
-              autoResize
-              class="code-editor full-height"
-              v-model="text1"
-            />
+            <QueryEditor />
           </TabPanel>
           <TabPanel value="1">
             <Textarea autoResize class="code-editor" v-model="text2" />
@@ -73,6 +69,7 @@ import Textarea from "primevue/textarea";
 import Dialog from "primevue/dialog";
 
 import Explorer from "./Explorer.vue";
+import QueryEditor from "./QueryEditor.vue";
 
 const text1 = ref(
   "SELECT PP_ID, PP_ARTIKEL_NR, PP_BEZEICHNUNG_1 FROM PP_PRODUKT;"
