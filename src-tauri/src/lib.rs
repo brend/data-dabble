@@ -6,6 +6,7 @@ use tauri::{Manager, State};
 
 mod explorer;
 mod oracle_provider;
+mod mock_provider;
 mod provider;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -82,7 +83,10 @@ pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider
                     &data_source.user,
                     &data_source.password,
                 )));
-            }
+            },
+            "mock" => {
+                providers.push(Box::new(mock_provider::MockProvider));
+            },
             _ => {
                 println!("Unknown provider: {}", data_source.provider);
             }
