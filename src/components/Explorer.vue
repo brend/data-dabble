@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import Tree from "primevue/tree";
 import ExplorerService from "../services/ExplorerService";
 

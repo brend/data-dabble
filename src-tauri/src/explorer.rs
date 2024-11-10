@@ -39,7 +39,7 @@ pub fn get_nodes(parent_node_key: Option<String>, preferences: &Preferences) -> 
         for provider in providers {
             nodes.push(Node::new(
                 &provider.id(),
-                &provider.id(),
+                &provider.name(),
                 NODE_TYPE_DATASOURCE,
                 false,
             ));

@@ -39,7 +39,7 @@
         </TabList>
         <TabPanels class="full-height">
           <TabPanel class="full-height" value="0">
-            <QueryEditor />
+            <QueryEditor data-provider-id="dfcb23ff-545e-4d6f-94d8-6a08f28013e7" />
           </TabPanel>
           <TabPanel value="1">
             <Textarea autoResize class="code-editor" v-model="text2" />

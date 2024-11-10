@@ -1,10 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 
 class QueryService {
-    async executeQuery(sqlQuery: string): Promise<any[]> {
+    async executeQuery(dataProviderId: string, sqlQuery: string): Promise<any[]> {
         try {
-            console.log("executing query", sqlQuery);
+            console.log("executing query", dataProviderId, sqlQuery);
             const result: any[] = await invoke("execute_query", {
+                dataProviderId: dataProviderId,
                 sqlQuery: sqlQuery,
             });
             return result;

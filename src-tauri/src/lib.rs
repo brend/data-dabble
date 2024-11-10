@@ -11,6 +11,7 @@ mod provider;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct DataSourceDefinition {
+    pub id: String,
     pub name: String,
     pub provider: String,
     pub connection_string: String,
@@ -83,21 +84,16 @@ pub struct Product {
 
 #[tauri::command]
 fn execute_query(
+    data_provider_id: String,
     sql_query: String,
     preferences: State<Preferences>,
-) -> Result<Vec<Product>, DataError> {
-    Ok(vec![Product {
-        code: "P01".to_string(),
-        name: "Red Apple".to_string(),
-        category: "Fruit".to_string(),
-        quantity: 10,
-    },
-    Product {
-        code: "P02".to_string(),
-        name: "Green Cheery".to_string(),
-        category: "Fruit".to_string(),
-        quantity: 20,
-    }])
+) -> Result<Vec<Vec<String>>, DataError> {
+    let data_providers = get_data_providers(&preferences);
+    let data_provider = data_providers
+        .iter()
+        .find(|dp| dp.id() == data_provider_id)
+        .ok_or(DataError::DataProviderNotFound(data_provider_id.clone()))?;
+    Ok(data_provider.execute_query(&sql_query)?)
 }
 
 pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider>> {
@@ -106,6 +102,7 @@ pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider
         match data_source.provider.as_str() {
             "oracle" => {
                 providers.push(Box::new(oracle_provider::OracleProvider::new(
+                    &data_source.id,
                     &data_source.connection_string,
                     &data_source.user,
                     &data_source.password,

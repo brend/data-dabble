@@ -31,18 +31,14 @@ import Button from 'primevue/button';
 
 import createQueryService from '../services/QueryService';
 
+const props = defineProps<{
+  dataProviderId: string;
+}>();
 const text = ref("SELECT * FROM users;");
-const products = ref([
-  { code: 'a1', name: 'Apple', category: 'Fruit', quantity: 5 },
-  { code: 'b1', name: 'Banana', category: 'Fruit', quantity: 10 },
-  { code: 'o1', name: 'Orange', category: 'Fruit', quantity: 5 },
-  { code: 'c1', name: 'Carrot', category: 'Vegetable', quantity: 5 },
-  { code: 't1', name: 'Tomato', category: 'Vegetable', quantity: 10 },
-  { code: 'p1', name: 'Potato', category: 'Vegetable', quantity: 15 }
-]);
+const products = ref([] as any[]);
 const queryService = createQueryService();
 const executeQuery = () => {
-  queryService.executeQuery(text.value).then((data) => {
+  queryService.executeQuery(props.dataProviderId, text.value).then((data) => {
     products.value = data;
   });
 }

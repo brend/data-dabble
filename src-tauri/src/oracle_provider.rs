@@ -13,12 +13,11 @@ pub struct OracleProvider {
 }
 
 impl OracleProvider {
-    pub fn new(connection_string: &str, _user: &str, password: &str) -> Self {
+    pub fn new(id: &str, connection_string: &str, _user: &str, password: &str) -> Self {
         let tns_name = connection_string.to_string();
-        let id = format!("oracle-{}", tns_name).to_string();
         let password = password.to_string();
         OracleProvider {
-            id,
+            id: id.to_string(),
             tns_name,
             password,
         }
@@ -73,6 +72,10 @@ impl DataProvider for OracleProvider {
         self.id.clone()
     }
 
+    fn name(&self) -> String {
+        self.tns_name.to_string()
+    }
+
     fn owns_node(&self, node_key: &str) -> bool {
         node_key.starts_with(&self.id)
     }
@@ -88,6 +91,30 @@ impl DataProvider for OracleProvider {
         } else {
             Ok(vec![])
         }
+    }
+
+    fn execute_query(&self, sql_query: &str) -> Result<Vec<Vec<String>>, DataError> {
+        let connection = self.open_connection()?;
+        let rows = connection.query(sql_query, &[])?;
+        let mut results = vec![];
+    
+        for row_result in rows {
+            let row = row_result?;
+            let mut result = vec![];
+    
+            // Iterate through each column in the row
+            for i in 0..row.column_info().len() {
+                // Retrieve the value as a string
+                let value: String = match row.get(i) {
+                    Ok(Some(val)) => val,
+                    Ok(None) => "NULL".to_string(),
+                    Err(_) => "ERROR".to_string(),
+                };
+                result.push(value);
+            }
+            results.push(result);
+        }
+        Ok(results)
     }
 }
 
