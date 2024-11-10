@@ -73,6 +73,33 @@ fn get_nodes(
     Ok(nodes)
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Product {
+    pub code: String,
+    pub name: String,
+    pub category: String,
+    pub quantity: i64,
+}
+
+#[tauri::command]
+fn execute_query(
+    sql_query: String,
+    preferences: State<Preferences>,
+) -> Result<Vec<Product>, DataError> {
+    Ok(vec![Product {
+        code: "P01".to_string(),
+        name: "Red Apple".to_string(),
+        category: "Fruit".to_string(),
+        quantity: 10,
+    },
+    Product {
+        code: "P02".to_string(),
+        name: "Green Cheery".to_string(),
+        category: "Fruit".to_string(),
+        quantity: 20,
+    }])
+}
+
 pub fn get_data_providers(preferences: &Preferences) -> Vec<Box<dyn DataProvider>> {
     let mut providers: Vec<Box<dyn DataProvider>> = vec![];
     for data_source in &preferences.data_sources {
@@ -130,7 +157,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![get_nodes,])
+        .invoke_handler(tauri::generate_handler![get_nodes,execute_query])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
